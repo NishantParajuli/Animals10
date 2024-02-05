@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Detection</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        h2 {
+            color: #444;
+        }
+        
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-primary {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+            color: #004085;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 8px;
+        }
+        #processingMessage {
+            color: #0066cc;
+            font-style: italic;
+        }
+        
+    </style>        
+</head>
+<body>
+    <h2>Upload an Image for Animal Detection</h2>
+
+    <form method="post" enctype="multipart/form-data" style="margin-top: 50px; margin-bottom: 30px;">
+		{% csrf_token %}
+		{{ form }}
+		<button type="submit" id="btnUpload" class="btn btn-primary">Upload</button>
+	</form>
+    <div id="processingMessage" style="display: none; margin-top: 20px;">
+        Processing, please wait...
+    </div>
+	{% if image_uri is not None %}
+    {% if predicted_class is not None %}
+        <div class="alert alert-primary" role="alert">
+            Predicted label: <b>{{ predicted_class }}</b>
+			Prediction probability: <b>{{ predicted_probability }}%</b>
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Prediction error. No label predicted.
+        </div>
+    {% endif %}
+
+    <img src="{{ image_uri }}" class="img-fluid" alt="Uploaded image"
+         style="max-width: min(500px, 100%); height: auto; margin-top: 30px;">
+	{% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const form = document.querySelector('form');
+            const processingMessage = document.getElementById('processingMessage');
+    
+            form.addEventListener('submit', () => {
+                // Show processing message
+                processingMessage.style.display = 'block';
+                
+                // Optionally, disable the upload button to prevent multiple submissions
+                document.getElementById('btnUpload').disabled = true;
+            });
+        });
+    </script>    
+</body>
+</html>
+
